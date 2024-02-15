@@ -4,8 +4,10 @@
 
 name: Run Ubuntu/Linux netCDF Tests
 
-on: [pull_request, workflow_dispatch]
-
+on: 
+  push:
+    branches:  [ main, master] 
+  
 concurrency:  
   group: ${{ github.workflow}}-${{ github.head_ref }}  
   cancel-in-progress: true
@@ -18,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        hdf5: [ 1.10.8, 1.12.2, 1.14.0 ]
+        hdf5: [ 1.14.0 ]
 
     steps:
       - uses: actions/checkout@v3
@@ -460,10 +462,10 @@ jobs:
 
     strategy:
       matrix:
-        hdf5: [1.10.8, 1.12.2, 1.14.0 ]
-        use_nc4: [ nc3, nc4 ]
-        use_dap: [ dap_off, dap_on ]
-        use_nczarr: [ nczarr_off, nczarr_on ]
+        hdf5: [1.14.0 ]
+        use_nc4: [ nc4 ]
+        use_dap: [ dap_on ]
+        use_nczarr: [ nczarr_on ]
     steps:
 
       - uses: actions/download-artifact@v3
@@ -500,12 +502,15 @@ jobs:
       - run: echo "CFLAGS=-I${HOME}/environments/${{ matrix.hdf5 }}/include" >> $GITHUB_ENV
       - run: echo "LDFLAGS=-L${HOME}/environments/${{ matrix.hdf5 }}/lib" >> $GITHUB_ENV
       - run: echo "LD_LIBRARY_PATH=${HOME}/environments/${{ matrix.hdf5 }}/lib" >> $GITHUB_ENV
+
       - run: |
           echo "ENABLE_HDF5=--disable-hdf5" >> $GITHUB_ENV
         if: matrix.use_nc4 == 'nc3'
+      
       - run: |
           echo "ENABLE_HDF5=--enable-hdf5" >> $GITHUB_ENV
         if: matrix.use_nc4 == 'nc4'
+      
       - run: echo "ENABLE_DAP=--disable-dap" >> $GITHUB_ENV
         if: matrix.use_dap == 'dap_off'
       - run: echo "ENABLE_DAP=--enable-dap" >> $GITHUB_ENV
@@ -624,10 +629,10 @@ jobs:
 
     strategy:
       matrix:
-        hdf5: [ 1.10.8, 1.12.2, 1.14.0 ]
-        use_nc4: [ nc3, nc4 ]
-        use_dap: [ dap_off, dap_on ]
-        use_nczarr: [ nczarr_off, nczarr_on ]
+        hdf5: [ 1.14.0 ]
+        use_nc4: [ nc4 ]
+        use_dap: [ dap_on ]
+        use_nczarr: [ nczarr_on ]
     steps:
 
       - uses: actions/checkout@v3
